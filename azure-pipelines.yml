@@ -1,6 +1,11 @@
 trigger:
 - '*'
 
+variables:
+  buildConfiguration: 'Release'
+  webRepository: 'web'
+  tag: '$(Build.BuildId)'
+
 pool:
   vmImage: 'ubuntu-18.04'
   demands:
