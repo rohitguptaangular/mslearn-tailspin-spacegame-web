@@ -1,16 +1,17 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /app
 
-# Copy csproj and restore as distinct layers
-COPY *.csproj ./
+# copy csproj and restore as distinct layers
+COPY *.sln .
+COPY Tailspin.SpaceGame.Web/*.csproj ./Tailspin.SpaceGame.Web/
 RUN dotnet restore
 
-# Copy everything else and build
-COPY . ./
+# copy everything else and build app
+COPY Tailspin.SpaceGame.Web/. ./Tailspin.SpaceGame.Web/
+WORKDIR /app/Tailspin.SpaceGame.Web
 RUN dotnet publish -c Release -o out
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
 WORKDIR /app
-COPY --from=build-env /app/out .
+COPY --from=build /app/Tailspin.SpaceGame.Web/out ./
 ENTRYPOINT ["dotnet", "aspnetapp.dll"]
